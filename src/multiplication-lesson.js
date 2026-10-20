@@ -1,8 +1,8 @@
+import {mathHTML as eq,formatMathText as prose} from './math-direction.js';
 import {getState,setState,recordLesson} from './progress.js';
 import {lessonNavigation} from './chapter-progress.js';
 import {mentor,lessonMentor} from './characters.js';
 const ar = n => n.toLocaleString('ar-SA');
-const eq = text => `<bdi class="equation" dir="ltr">${text}</bdi>`;
 export const practice = [
  {prompt:'المستوى الأول · استعملي القيمة المنزلية',math:'٩ × ١٠ = ؟',options:[90,19,900],answer:90,hint:'١٠ آحاد تساوي عشرة واحدة. ماذا تصبح ٩ آحاد؟',explain:'تصبح ٩ عشرات، أي ٩٠.',skill:'الضرب في قوى العشرة'},
  {prompt:'المستوى الثاني · انطلقي من حقيقة أساسية',math:'٤ × ٨٠٠ = ؟',options:[320,3200,32000],answer:3200,hint:'احسبي ٤ × ٨ أولًا، ثم اجعلي الناتج مئات.',explain:'٤ × ٨ = ٣٢؛ إذن ٣٢ مئة = ٣٢٠٠.',skill:'استخدام حقيقة الضرب'},

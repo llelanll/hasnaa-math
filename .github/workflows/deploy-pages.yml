@@ -29,6 +29,21 @@ jobs:
         run: npm ci --no-audit --no-fund
       - name: Build site
         run: npm run build
+      - name: Install Chromium for math direction regression tests
+        run: npx playwright install --with-deps chromium
+      - name: Verify mathematical display order
+        env:
+          TEST_BASE_URL: http://127.0.0.1:4173/hasnaa-math/
+        run: |
+          npm run preview -- --port 4173 > /tmp/hasnaa-math-preview.log 2>&1 &
+          preview_pid=$!
+          trap 'kill "$preview_pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent "$TEST_BASE_URL" > /dev/null; then break; fi
+            sleep 1
+          done
+          curl --fail --silent "$TEST_BASE_URL" > /dev/null
+          node --test tests/math-direction.test.js
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v3
         with:

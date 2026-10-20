@@ -1,3 +1,4 @@
+import {mathHTML as eq,formatMathText as prose} from './math-direction.js';
 import {getState,setState,recordLesson,lessonRecord} from './progress.js';
 import {lessonNavigation,chapterMeter} from './chapter-progress.js';
 import {mentor,lessonMentor} from './characters.js';
@@ -6,8 +7,6 @@ export {chapterThree};
 const ar=n=>n.toLocaleString('ar-SA');
 const steps=['أفهم','أشاهد مثالًا','أتدرّب','ألعب','أختبر نفسي','أراجع نتيجتي'];
 const states=new Map();
-const eq=s=>/[ء-ي]/.test(s)?`<span dir="rtl">${prose(s)}</span>`:`<bdi class="equation" dir="ltr">${s}</bdi>`;
-const prose=s=>!/[ء-ي]/.test(s)?eq(s):s.replace(/[٠-٩]+(?:\s*[×+−=]\s*[٠-٩]+)+/g,eq);
 const learningHint=l=>({'distributive-property':'فككي العدد إلى جزأين، واضربي كل جزء ثم اجمعي.','estimating-products':'راجعي طريقة التقريب المطلوبة، ثم استبدلي الأعداد بما يسهل حسابه.','multiply-one-digit':'ابدئي بالآحاد، واكتبي ما تعيدين تجميعه في المنزلة التالية.','draw-a-picture':'ارسمي الأشياء أولًا، ثم عدّي الفواصل وافحصي طرفي الرسم.','multiply-two-digits':'افصلي ضرب الآحاد عن ضرب العشرات، واحفظي قيمة كل منزلة.','multiplication-properties':'راقبي ما تغيّر: ترتيب العوامل أم الأقواس أم الضرب في الواحد؟','choose-a-strategy':'حددي المطلوب والمعطيات أولًا، وتحققي من كفاية المعلومات.'}[l.slug]);
 const message=(kind,text)=>`<div class="feedback ${kind}" role="status">${prose(text)}</div>`;
 function state(slug){
