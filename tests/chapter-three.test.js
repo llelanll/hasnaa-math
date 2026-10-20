@@ -1,3 +1,4 @@
+import {existsSync} from 'node:fs';
 import {copySteps} from '../src/short-copy.js';
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
@@ -18,7 +19,7 @@ test('chapter content has seven complete lessons and verified arithmetic samples
  assert.equal(answer('multiplication-properties','quiz',4),13*2*10);
 });
 for(const width of [1280,390,320])test(`chapter three at ${width}px: all lesson interactions, feedback, scores, retry, routing and overflow`,async()=>{
- const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',headless:true,args:['--no-sandbox']});
+ const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),headless:true,args:['--no-sandbox']});
  try{for(const l of chapterThree){
   const ctx=await browser.newContext({viewport:{width,height:900},reducedMotion:'reduce'}),p=await ctx.newPage(),errors=[];
   p.on('pageerror',e=>errors.push(e.message));p.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
@@ -43,11 +44,11 @@ for(const width of [1280,390,320])test(`chapter three at ${width}px: all lesson 
   for(let i=0;i<5;i++){const n=i===4?(l.quiz[i].answer+1)%3:l.quiz[i].answer;await p.locator(`[data-ch-quiz="${n}"]`).click();assert.equal(await p.locator('[data-ch-quiz][aria-pressed="true"]').count(),1);assert.equal(await p.locator('[data-ch-quiz].correct').count(),0);await noOverflow();if(i<4)await p.locator('[data-ch-quiz-next]').click();}
   await p.locator('[data-ch-quiz-prev]').click();await p.locator('[data-ch-quiz-next]').click();await p.locator('[data-ch-submit]').click();assert.equal(await p.locator('.score').count(),0);await p.locator(`[data-ch-quiz="${(l.quiz[4].answer+1)%3}"]`).click();await p.locator('[data-ch-submit]').click();
   assert.match(await p.locator('.score').innerText(),/٤/);assert.ok(await p.locator('.skill-review').count()>0);assert.equal(await p.locator('.points b').innerText(),'١٠٠');await noOverflow();await step(4);await step(5);assert.equal(await p.locator('.points b').innerText(),'١٠٠');
-  await p.locator('nav [data-page="lessons"]').click();assert.equal(await p.locator('.chapter-card').count(),8);await noOverflow();await p.locator(`.chapter-card[href="#${l.slug}"]`).click();assert.match(await p.locator('.score').innerText(),/٤/);
+  await p.locator('nav [data-page="lessons"]').click();await p.locator('a[href="#chapter-three"]').click();await p.getByRole('heading',{level:1,name:'الفصل الثالث · الضرب',exact:true}).waitFor();assert.equal(await p.locator('.chapter-card').count(),8);await noOverflow();await p.locator(`.chapter-card[href="#${l.slug}"]`).click();assert.match(await p.locator('.score').innerText(),/٤/);
   await p.locator('[data-ch-quiz-reset]').click();for(let i=0;i<5;i++){await p.locator(`[data-ch-quiz="${l.quiz[i].answer}"]`).click();if(i<4)await p.locator('[data-ch-quiz-next]').click();else await p.locator('[data-ch-submit]').click();}
-  assert.equal(await p.locator('.skill-review').count(),0);assert.equal(await p.locator('.points b').innerText(),'١٥٠');
-  await step(3);await p.locator('[data-ch-game-reset]').click();for(let i=0;i<3;i++){await p.locator(`[data-ch-game="${l.game[i].answer}"]`).click();await p.locator('[data-ch-game-next]').click();}assert.equal(await p.locator('.points b').innerText(),'١٨٠');
-  await p.reload();assert.equal(await p.locator('.points b').innerText(),'١٨٠');assert.equal(await p.locator('[data-ch-step="5"]').isDisabled(),false);await noOverflow();
+  assert.equal(await p.locator('.skill-review').count(),0);assert.equal(await p.locator('.points b').innerText(),'١١٠');
+  await step(3);await p.locator('[data-ch-game-reset]').click();for(let i=0;i<3;i++){await p.locator(`[data-ch-game="${l.game[i].answer}"]`).click();await p.locator('[data-ch-game-next]').click();}assert.equal(await p.locator('.points b').innerText(),'١٢٠');
+  await p.reload();assert.equal(await p.locator('.points b').innerText(),'١٢٠');assert.equal(await p.locator('[data-ch-step="5"]').isDisabled(),false);await noOverflow();
   assert.deepEqual(errors,[],l.slug);console.log(`verified ${l.slug} ${width}px`);await ctx.close();
  }}finally{await browser.close();}
 });

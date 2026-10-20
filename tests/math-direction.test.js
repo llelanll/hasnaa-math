@@ -7,7 +7,7 @@ import {questions} from '../src/questions.js';
 import {chapterThree} from '../src/chapter-three-data.js';
 import {quiz,practice} from '../src/multiplication-lesson.js';
 const base=process.env.TEST_BASE_URL||'http://127.0.0.1:5173/hasnaa-math/';
-const cases=['٢، ٤، ٨، ١٦، …','٣، ٦، …، ٢٤، ٣٠','٢٣ − ٧ = ١٦','٢٤ ÷ ٦ = ٤','٦ × (١٠ + ١٥) = ٦٠ + ٩٠ = ١٥٠','(٣، ٥)','(-٣، ٥)','٣/٤ + ١/٤ = ١','٣⁄٤','½ + ¼ = ¾','٢ → ٤ → ٨','٤ ← ٨ ← ١٢','س + ٣ = ٧','[٢، ٥]','٢٫٥ × ٤ = ١٠'];
+const cases=['٣٢ □ ٢٣','٢، ٤، ٨، ١٦، …','٣، ٦، …، ٢٤، ٣٠','٢٣ − ٧ = ١٦','٢٤ ÷ ٦ = ٤','٦ × (١٠ + ١٥) = ٦٠ + ٩٠ = ١٥٠','(٣، ٥)','(-٣، ٥)','٣/٤ + ١/٤ = ١','٣⁄٤','½ + ¼ = ¾','٢ → ٤ → ٨','٤ ← ٨ ← ١٢','س + ٣ = ٧','[٢، ٥]','٢٫٥ × ٤ = ١٠'];
 function stripped(html){return html.replace(/<[^>]*>/g,'').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&').replace(/&quot;/g,'"').replace(/&#39;/g,"'");}
 test('shared math formatter preserves source digits, signs, Arabic prose and all existing content',()=>{
  for(const text of cases){assert.deepEqual(mathRanges(text).map(r=>r.text),[text],text);assert.equal(stripped(mathHTML(text)),text);assert.match(mathHTML(text),/math-content/);}

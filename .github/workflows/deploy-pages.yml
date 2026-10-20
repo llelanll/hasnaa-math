@@ -14,6 +14,7 @@ concurrency:
 
 jobs:
   build:
+    timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -31,7 +32,7 @@ jobs:
         run: npm run build
       - name: Install Chromium for math direction regression tests
         run: npx playwright install --with-deps chromium
-      - name: Verify math direction and visual learning activities
+      - name: Verify full curriculum, legacy features and math direction
         env:
           TEST_BASE_URL: http://127.0.0.1:4173/hasnaa-math/
         run: |
@@ -43,7 +44,7 @@ jobs:
             sleep 1
           done
           curl --fail --silent "$TEST_BASE_URL" > /dev/null
-          node --test tests/math-direction.test.js tests/visual-learning.test.js tests/short-copy.test.js
+          npm test
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v3
         with:

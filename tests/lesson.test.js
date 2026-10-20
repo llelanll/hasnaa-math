@@ -1,3 +1,4 @@
+import {existsSync} from 'node:fs';
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {chromium} from '@playwright/test';
@@ -5,11 +6,11 @@ import {practice,quiz} from '../src/multiplication-lesson.js';
 import {questions} from '../src/questions.js';
 const base=process.env.TEST_BASE_URL||'http://127.0.0.1:5173/hasnaa-math/';
 test('lesson: warmup, hints, scoring, original game, assessment and skill review on desktop and mobile',async()=>{
- const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',headless:true,args:['--no-sandbox']});
+ const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),headless:true,args:['--no-sandbox']});
  try{for(const width of [1280,390,320]){
  const ctx=await browser.newContext({viewport:{width,height:900}});const p=await ctx.newPage();const errors=[];p.on('pageerror',e=>errors.push(e.message));p.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
- await p.goto(base+'#lessons');await p.getByRole('link',{name:'ابدئي الدرس ←',exact:true}).click();await p.getByRole('heading',{name:'أنماط الضرب',exact:true,level:1}).waitFor();
- await p.locator('nav [data-page="home"]').click();await p.locator('nav [data-page="lessons"]').click();await p.getByRole('link',{name:'ابدئي الدرس ←',exact:true}).click();await p.getByRole('heading',{name:'أنماط الضرب',exact:true,level:1}).waitFor();
+ await p.goto(base+'#lessons');await p.locator('a[href="#chapter-three"]').click();await p.locator('.chapter-card[href="#multiplication-patterns"]').click();await p.getByRole('heading',{name:'أنماط الضرب',exact:true,level:1}).waitFor();
+ await p.locator('nav [data-page="home"]').click();await p.locator('nav [data-page="lessons"]').click();await p.locator('a[href="#chapter-three"]').click();await p.locator('.chapter-card[href="#multiplication-patterns"]').click();await p.getByRole('heading',{name:'أنماط الضرب',exact:true,level:1}).waitFor();
  const step=async n=>{await p.locator(`[data-lesson-step="${n}"]`).first().click();assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);};
  await p.locator('[data-visual="page"][data-value="1"]').click();await p.locator('[data-warm="16"]').click();assert.match(await p.locator('[role="status"]').innerText(),/حاولي/);await p.locator('[data-warm="60"]').click();assert.match(await p.locator('[role="status"]').innerText(),/أحسنتِ/);
  await step(1);await p.locator('[data-visual="example"][data-value="2"]').click();await p.locator('[data-visual="next"]').click();assert.match(await p.locator('.solution-focus').innerText(),/٦ × ٥ = ٣٠/);await p.locator('[data-visual="next"]').click();assert.match(await p.locator('.solution-focus').innerText(),/لا نحذف صفر/);await step(2);
@@ -29,8 +30,8 @@ test('lesson: warmup, hints, scoring, original game, assessment and skill review
  assert.match(await p.locator('.score').innerText(),/٤/);assert.match(await p.locator('.skill-grid').innerText(),/أتقنتِ/);assert.match(await p.locator('.skill-grid').innerText(),/راجعي: تطبيق الضرب/);assert.equal(await p.locator('.points b').innerText(),'١٨٠');
  await step(4);await step(5);assert.equal(await p.locator('.points b').innerText(),'١٨٠');await p.locator('[data-quiz-reset]').click();
  for(let i=0;i<5;i++){await p.locator(`[data-quiz-answer="${quiz[i].answer}"]`).click();if(i<4)await p.locator('[data-quiz-next]').click();else await p.locator('[data-quiz-submit]').click();}
- assert.equal(await p.locator('.points b').innerText(),'٢٣٠');assert.match(await p.locator('.score').innerText(),/٥/);assert.ok(!(await p.locator('.skill-grid').innerText()).includes('راجعي:'));
- await p.reload();assert.equal(await p.locator('.points b').innerText(),'٢٣٠');assert.match(await p.locator('.score').innerText(),/٥/);await step(4);await p.locator('[data-quiz-reset]').click();for(let i=0;i<4;i++)await p.locator('[data-quiz-next]').click();assert.equal(await p.locator('[data-quiz-submit]').isDisabled(),true);
+ assert.equal(await p.locator('.points b').innerText(),'١٩٠');assert.match(await p.locator('.score').innerText(),/٥/);assert.ok(!(await p.locator('.skill-grid').innerText()).includes('راجعي:'));
+ await p.reload();assert.equal(await p.locator('.points b').innerText(),'١٩٠');assert.match(await p.locator('.score').innerText(),/٥/);await step(4);await p.locator('[data-quiz-reset]').click();for(let i=0;i<4;i++)await p.locator('[data-quiz-next]').click();assert.equal(await p.locator('[data-quiz-submit]').isDisabled(),true);
  assert.deepEqual(errors,[]);await ctx.close();
  }}finally{await browser.close();}
 });

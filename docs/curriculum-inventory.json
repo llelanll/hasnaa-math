@@ -1,0 +1,94 @@
+{
+  "counts": {
+    "chapters": 12,
+    "coreLessons": 81,
+    "enrichmentActivities": 1,
+    "lessonPages": 82,
+    "explorations": 82,
+    "warmups": 82,
+    "workedExamples": 247,
+    "practiceActivities": 328,
+    "lessonGames": 82,
+    "learningActivities": 821,
+    "gameQuestions": 253,
+    "assessments": 82,
+    "assessmentQuestions": 410,
+    "newVerifiedCases": 1184,
+    "gameModes": 6,
+    "skillSpecificConfigurations": 66
+  },
+  "chapters": [
+    {
+      "number": 1,
+      "title": "القيمة المنزلية",
+      "lessons": 7,
+      "url": "https://llelanll.github.io/hasnaa-math/#chapter-1"
+    },
+    {
+      "number": 2,
+      "title": "الجمع والطرح",
+      "lessons": 6,
+      "url": "https://llelanll.github.io/hasnaa-math/#chapter-2"
+    },
+    {
+      "number": 3,
+      "title": "الضرب",
+      "lessons": 8,
+      "url": "https://llelanll.github.io/hasnaa-math/#chapter-three"
+    },
+    {
+      "number": 4,
+      "title": "القسمة",
+      "lessons": 6,
+      "url": "https://llelanll.github.io/hasnaa-math/#chapter-4"
+    },
+    {
+      "number": 5,
+      "title": "العبارات الجبرية والمعادلات",
+      "lessons": 8,
+      "url": "https://llelanll.github.io/hasnaa-math/#chapter-5"
+    },
+    {
+      "number": 6,
+      "title": "الكسور الاعتيادية",
+      "lessons": 7,
+      "url": "https://llelanll.github.io/hasnaa-math/#chapter-6"
+    },
+    {
+      "number": 7,
+      "title": "الإحصاء والاحتمال",
+      "lessons": 6,
+      "url": "https://llelanll.github.io/hasnaa-math/#chapter-7"
+    },
+    {
+      "number": 8,
+      "title": "القواسم والمضاعفات",
+      "lessons": 7,
+      "url": "https://llelanll.github.io/hasnaa-math/#chapter-8"
+    },
+    {
+      "number": 9,
+      "title": "جمع الكسور وطرحها",
+      "lessons": 5,
+      "url": "https://llelanll.github.io/hasnaa-math/#chapter-9"
+    },
+    {
+      "number": 10,
+      "title": "وحدات القياس",
+      "lessons": 7,
+      "url": "https://llelanll.github.io/hasnaa-math/#chapter-10"
+    },
+    {
+      "number": 11,
+      "title": "الأشكال الهندسية",
+      "lessons": 8,
+      "url": "https://llelanll.github.io/hasnaa-math/#chapter-11"
+    },
+    {
+      "number": 12,
+      "title": "المحيط والمساحة والحجم",
+      "lessons": 6,
+      "url": "https://llelanll.github.io/hasnaa-math/#chapter-12"
+    }
+  ]
+}

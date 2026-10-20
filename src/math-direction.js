@@ -3,12 +3,12 @@
 const number=String.raw`[+−-]?[0-9٠-٩۰-۹]+(?:[٫.٬][0-9٠-٩۰-۹]+)*`;
 const variable=String.raw`(?<![\p{L}\p{M}])[a-zA-Zسصعنمك](?![\p{L}\p{M}])`;
 const base=String.raw`(?:${number}|${variable}|[¼½¾⅐-⅞؟?□…]|\.\.\.)`;
-const operator=String.raw`[+−\-–×÷*/⁄=≠≈<>≤≥^:،,؛;→←↔⇒⇐↦]`;
+const operator=String.raw`[+−\-–×÷*/⁄=≠≈<>≤≥^:،,؛;→←↔⇒⇐↦□]`;
 const expression=atom=>String.raw`${atom}(?:[ \t]*${operator}[ \t]*${atom})*`;
 const atom=String.raw`(?:[([{][ \t]*)*${base}(?:[ \t]*[)\]}])*`;
 const source=String.raw`${expression(atom)}(?:[ \t]*(?:…|\.\.\.))?`;
 const runs=()=>new RegExp(source,'gu');
-const significant=/[+−\-–×÷*/⁄=≠≈<>≤≥^:،,؛;→←↔⇒⇐↦()[\]{}¼½¾⅐-⅞]/u;
+const significant=/[+−\-–×÷*/⁄=≠≈<>≤≥^:،,؛;→←↔⇒⇐↦□()[\]{}¼½¾⅐-⅞]/u;
 export function mathRanges(text){return [...text.matchAll(runs())].filter(m=>significant.test(m[0])).map(m=>({start:m.index,end:m.index+m[0].length,text:m[0]}));}
 export function isMathNotation(text){const trimmed=text.trim();const match=new RegExp(`^(?:${source})$`,'u');return match.test(trimmed);}
 const escape=text=>String(text).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

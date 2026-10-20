@@ -1,3 +1,4 @@
+import {existsSync} from 'node:fs';
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {chromium} from '@playwright/test';
@@ -17,7 +18,7 @@ test('all 121 products, four question types, zero-safe missing factors, normaliz
  for(let a=0;a<=10;a++){const q=buildQueue(a);assert.equal(q.length,11);assert.equal(new Set(q.map(f=>f.b)).size,11);assert.ok(q.every(f=>f.a===a));}
 });
 for(const width of [1280,390])test(`tables at ${width}px: every fact, modes, second chances, durable rewards, mastery and timer`,async()=>{
- const b=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',args:['--no-sandbox']});
+ const b=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
  try{const ctx=await b.newContext({viewport:{width,height:950},reducedMotion:'reduce'});const p=await ctx.newPage();const errors=[];p.on('pageerror',e=>errors.push(e.message));p.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
  await p.goto(base+'#home');await p.getByRole('link',{name:'تدرّبي على جدول الضرب'}).click();assert.equal(await p.locator('[data-table-select]').count(),12);
  const noOverflow=async()=>assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
