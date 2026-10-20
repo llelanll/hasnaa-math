@@ -36,17 +36,17 @@ for(const width of [1280,390,320])test(`chapter three at ${width}px: all lesson 
    await p.locator(`[data-ch-practice="${l.practice[i].answer}"]`).click();assert.equal(await p.locator('[data-ch-practice]:disabled').count(),3);await noOverflow();if(i<3)await p.locator('[data-ch-practice-next]').click();
   }
   assert.equal(await p.locator('.points b').innerText(),'٤٠');await p.locator('[data-ch-practice-prev]').click();assert.equal(await p.locator('[data-ch-practice]:disabled').count(),3);assert.equal(await p.locator('.points b').innerText(),'٤٠');
-  await step(3);for(let i=0;i<3;i++){const n=i===0?(l.game[i].answer+1)%3:l.game[i].answer;await p.locator(`[data-ch-game="${n}"]`).click();assert.equal(await p.locator('[data-ch-game]:disabled').count(),3);assert.equal(await p.locator('[data-ch-game].correct').count(),1);await noOverflow();await p.locator('[data-ch-game-next]').click();}
+  await step(3);for(let i=0;i<3;i++){const n=i===0?(l.game[i].answer+1)%3:l.game[i].answer;await p.locator(`[data-ch-game="${n}"]`).click();if(i===0){assert.equal(await p.locator('[data-ch-game]:disabled').count(),0);assert.equal(await p.locator('[data-ch-game].correct').count(),0);await p.locator(`[data-ch-game="${n}"]`).click();}assert.equal(await p.locator('[data-ch-game]:disabled').count(),3);assert.equal(await p.locator('[data-ch-game].correct').count(),1);await noOverflow();await p.locator('[data-ch-game-next]').click();}
   assert.equal(await p.locator('.points b').innerText(),'٦٠');await step(4);
   await p.locator('[data-ch-quiz-jump="4"]').click();assert.equal(await p.locator('[data-ch-submit]').isDisabled(),true);await p.locator('[data-ch-quiz-jump="0"]').click();
   for(let i=0;i<5;i++){const n=i===4?(l.quiz[i].answer+1)%3:l.quiz[i].answer;await p.locator(`[data-ch-quiz="${n}"]`).click();assert.equal(await p.locator('[data-ch-quiz][aria-pressed="true"]').count(),1);assert.equal(await p.locator('[data-ch-quiz].correct').count(),0);await noOverflow();if(i<4)await p.locator('[data-ch-quiz-next]').click();}
-  await p.locator('[data-ch-quiz-prev]').click();await p.locator('[data-ch-quiz-next]').click();await p.locator('[data-ch-submit]').click();
+  await p.locator('[data-ch-quiz-prev]').click();await p.locator('[data-ch-quiz-next]').click();await p.locator('[data-ch-submit]').click();assert.equal(await p.locator('.score').count(),0);await p.locator(`[data-ch-quiz="${(l.quiz[4].answer+1)%3}"]`).click();await p.locator('[data-ch-submit]').click();
   assert.match(await p.locator('.score').innerText(),/٤/);assert.ok(await p.locator('.skill-review').count()>0);assert.equal(await p.locator('.points b').innerText(),'١٠٠');await noOverflow();await step(4);await step(5);assert.equal(await p.locator('.points b').innerText(),'١٠٠');
   await p.locator('nav [data-page="lessons"]').click();assert.equal(await p.locator('.chapter-card').count(),8);await noOverflow();await p.locator(`.chapter-card[href="#${l.slug}"]`).click();assert.match(await p.locator('.score').innerText(),/٤/);
   await p.locator('[data-ch-quiz-reset]').click();for(let i=0;i<5;i++){await p.locator(`[data-ch-quiz="${l.quiz[i].answer}"]`).click();if(i<4)await p.locator('[data-ch-quiz-next]').click();else await p.locator('[data-ch-submit]').click();}
   assert.equal(await p.locator('.skill-review').count(),0);assert.equal(await p.locator('.points b').innerText(),'١٥٠');
   await step(3);await p.locator('[data-ch-game-reset]').click();for(let i=0;i<3;i++){await p.locator(`[data-ch-game="${l.game[i].answer}"]`).click();await p.locator('[data-ch-game-next]').click();}assert.equal(await p.locator('.points b').innerText(),'١٨٠');
-  await p.reload();assert.equal(await p.locator('.points b').innerText(),'١٨٠');assert.equal(await p.locator('[data-ch-step="5"]').isDisabled(),true);await noOverflow();
+  await p.reload();assert.equal(await p.locator('.points b').innerText(),'١٨٠');assert.equal(await p.locator('[data-ch-step="5"]').isDisabled(),false);await noOverflow();
   assert.deepEqual(errors,[],l.slug);console.log(`verified ${l.slug} ${width}px`);await ctx.close();
  }}finally{await browser.close();}
 });

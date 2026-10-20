@@ -15,6 +15,7 @@ test('desktop and mobile: full rounds, correction, score, retry and navigation',
   for(let i=0;i<10;i++){
    const correct=i%2===0;const q=questions[i];const answer=correct?q.answer:q.options.find(v=>v!==q.answer);
    await page.locator(`[data-answer="${answer}"]`).click();
+   if(!correct){assert.equal(await page.locator('.answer:disabled').count(),0);assert.equal(await page.locator('.answer.correct').count(),0);assert.ok(!(await page.locator('#feedback').innerText()).includes(q.explanation));await page.locator(`[data-answer="${answer}"]`).click();}
    assert.equal(await page.locator('.answer:disabled').count(),4);
    assert.equal(await page.locator('.answer.correct').count(),1);
    assert.ok((await page.locator('#feedback').innerText()).includes(q.explanation));
@@ -33,7 +34,7 @@ test('desktop and mobile: full rounds, correction, score, retry and navigation',
   await page.reload();assert.equal(await page.locator('.points b').innerText(),'١٥٠');
   for(const section of ['lessons','games','quiz','challenges']){await page.locator(`nav [data-page="${section}"]`).click();assert.ok(await page.locator('h1').isVisible());assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);}
   await page.locator('[data-start="challenge"]').click();
-  for(const q of questions){await page.locator(`[data-answer="${q.options.find(v=>v!==q.answer)}"]`).click();await page.locator('#next').click();}
+  for(const q of questions){await page.locator(`[data-answer="${q.options.find(v=>v!==q.answer)}"]`).click();await page.locator(`[data-answer="${q.options.find(v=>v!==q.answer)}"]`).click();await page.locator('#next').click();}
   assert.equal(await page.locator('.stars').getAttribute('aria-label'),'٠ نجوم من ٣');
   assert.ok((await page.locator('.encouragement').innerText()).includes('كل محاولة'));
   assert.deepEqual(errors,[]);await context.close();

@@ -25,12 +25,12 @@ test('lesson: warmup, hints, scoring, original game, assessment and skill review
  assert.equal(await p.locator('.points b').innerText(),'١٤٠');await p.locator('[data-lesson-return]').click();assert.match(await p.locator('.lesson-content').innerText(),/السؤال ١ من ٥/);
  await p.locator('[data-quiz-next]').click();await p.locator('[data-quiz-prev]').click();
  for(let i=0;i<5;i++){await p.locator(`[data-quiz-answer="${i===4?0:quiz[i].answer}"]`).click();if(i<4)await p.locator('[data-quiz-next]').click();}
- await p.locator('[data-quiz-prev]').click();await p.locator('[data-quiz-next]').click();await p.locator('[data-quiz-submit]').click();
+ await p.locator('[data-quiz-prev]').click();await p.locator('[data-quiz-next]').click();await p.locator('[data-quiz-submit]').click();assert.equal(await p.locator('.score').count(),0);await p.locator('[data-quiz-answer="0"]').click();await p.locator('[data-quiz-submit]').click();
  assert.match(await p.locator('.score').innerText(),/٤/);assert.match(await p.locator('.skill-grid').innerText(),/أتقنتِ/);assert.match(await p.locator('.skill-grid').innerText(),/راجعي: تطبيق الضرب/);assert.equal(await p.locator('.points b').innerText(),'١٨٠');
  await step(4);await step(5);assert.equal(await p.locator('.points b').innerText(),'١٨٠');await p.locator('[data-quiz-reset]').click();
  for(let i=0;i<5;i++){await p.locator(`[data-quiz-answer="${quiz[i].answer}"]`).click();if(i<4)await p.locator('[data-quiz-next]').click();else await p.locator('[data-quiz-submit]').click();}
  assert.equal(await p.locator('.points b').innerText(),'٢٣٠');assert.match(await p.locator('.score').innerText(),/٥/);assert.ok(!(await p.locator('.skill-grid').innerText()).includes('راجعي:'));
- await p.reload();assert.equal(await p.locator('.points b').innerText(),'٢٣٠');await step(4);for(let i=0;i<4;i++)await p.locator('[data-quiz-next]').click();assert.equal(await p.locator('[data-quiz-submit]').isDisabled(),true);
+ await p.reload();assert.equal(await p.locator('.points b').innerText(),'٢٣٠');assert.match(await p.locator('.score').innerText(),/٥/);await step(4);await p.locator('[data-quiz-reset]').click();for(let i=0;i<4;i++)await p.locator('[data-quiz-next]').click();assert.equal(await p.locator('[data-quiz-submit]').isDisabled(),true);
  assert.deepEqual(errors,[]);await ctx.close();
  }}finally{await browser.close();}
 });
