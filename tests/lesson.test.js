@@ -11,8 +11,8 @@ test('lesson: warmup, hints, scoring, original game, assessment and skill review
  await p.goto(base+'#lessons');await p.getByRole('link',{name:'ابدئي الدرس ←',exact:true}).click();await p.getByRole('heading',{name:'أنماط الضرب',exact:true,level:1}).waitFor();
  await p.locator('nav [data-page="home"]').click();await p.locator('nav [data-page="lessons"]').click();await p.getByRole('link',{name:'ابدئي الدرس ←',exact:true}).click();await p.getByRole('heading',{name:'أنماط الضرب',exact:true,level:1}).waitFor();
  const step=async n=>{await p.locator(`[data-lesson-step="${n}"]`).first().click();assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);};
- await p.locator('[data-warm="16"]').click();assert.match(await p.locator('[role="status"]').innerText(),/حاولي/);await p.locator('[data-warm="60"]').click();assert.match(await p.locator('[role="status"]').innerText(),/أحسنتِ/);
- await step(1);await p.locator('summary').click();assert.ok(await p.getByText('لا؛ في',{exact:false}).isVisible());await step(2);
+ await p.locator('[data-visual="page"][data-value="1"]').click();await p.locator('[data-warm="16"]').click();assert.match(await p.locator('[role="status"]').innerText(),/حاولي/);await p.locator('[data-warm="60"]').click();assert.match(await p.locator('[role="status"]').innerText(),/أحسنتِ/);
+ await step(1);await p.locator('[data-visual="example"][data-value="2"]').click();await p.locator('[data-visual="next"]').click();assert.match(await p.locator('.solution-focus').innerText(),/لا نحذف صفر/);await step(2);
  for(let i=0;i<4;i++){
  await p.locator('[data-hint]').click();assert.match(await p.locator('[role="status"]').innerText(),/تلميح/);
  await p.locator(`[data-practice="${practice[i].options.find(n=>n!==practice[i].answer)}"]`).click();assert.match(await p.locator('[role="status"]').innerText(),/حاولي/);

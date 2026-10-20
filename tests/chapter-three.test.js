@@ -25,10 +25,10 @@ for(const width of [1280,390,320])test(`chapter three at ${width}px: all lesson 
   await p.goto(base+'#'+l.slug);await p.getByRole('heading',{name:l.title,exact:true,level:1}).waitFor();assert.equal(await p.locator('html').getAttribute('dir'),'rtl');
   const step=async n=>{await p.locator(`[data-ch-step="${n}"]`).first().click();await noOverflow();};
   assert.equal(await p.locator('[data-ch-step="5"]').isDisabled(),true);await noOverflow();
-  await p.locator(`[data-ch-warm="${(l.warm.answer+1)%3}"]`).click();assert.match(await p.locator('.live-feedback').innerText(),/حاولي/);await p.locator(`[data-ch-warm="${l.warm.answer}"]`).click();assert.match(await p.locator('.live-feedback').innerText(),/أحسنتِ/);
-  await step(1);assert.equal(await p.locator('.lesson-inset ol li').count(),l.examples.length);
-  for(let i=0;i<l.examples.length;i++){for(let j=1;j<l.examples[i].steps.length;j++)await p.locator(`[data-ch-example="${i}"]`).click();}
-  assert.equal(await p.locator('.example-complete').count(),l.examples.length);await noOverflow();
+  await p.locator('[data-visual="page"][data-value="1"]').click();await p.locator(`[data-ch-warm="${(l.warm.answer+1)%3}"]`).click();assert.match(await p.locator('.live-feedback').innerText(),/حاولي/);await p.locator(`[data-ch-warm="${l.warm.answer}"]`).click();assert.match(await p.locator('.live-feedback').innerText(),/أحسنتِ/);
+  await step(1);
+  for(let i=0;i<l.examples.length;i++){await p.locator(`[data-visual="example"][data-value="${i}"]`).first().click();for(let j=1;j<l.examples[i].steps.length;j++)await p.locator('[data-visual="next"]').click();assert.equal(await p.locator('.example-complete').count(),1);assert.equal(await p.locator('.solution-focus').innerText(),l.examples[i].steps.at(-1));}
+  await noOverflow();
   await step(2);
   for(let i=0;i<4;i++){
    await p.locator('[data-ch-hint]').click();assert.match(await p.locator('.live-feedback').innerText(),/تلميح/);
