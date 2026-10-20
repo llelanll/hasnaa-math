@@ -8,8 +8,8 @@ test('lesson: warmup, hints, scoring, original game, assessment and skill review
  const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',headless:true,args:['--no-sandbox']});
  try{for(const width of [1280,390,320]){
  const ctx=await browser.newContext({viewport:{width,height:900}});const p=await ctx.newPage();const errors=[];p.on('pageerror',e=>errors.push(e.message));p.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
- await p.goto(base+'#lessons');await p.getByRole('link',{name:'ابدئي الدرس'}).click();await p.getByRole('heading',{name:'أنماط الضرب',exact:true}).waitFor();
- await p.locator('nav [data-page="home"]').click();await p.locator('nav [data-page="lessons"]').click();await p.getByRole('link',{name:'ابدئي الدرس'}).click();await p.getByRole('heading',{name:'أنماط الضرب',exact:true}).waitFor();
+ await p.goto(base+'#lessons');await p.getByRole('link',{name:'ابدئي الدرس ←',exact:true}).click();await p.getByRole('heading',{name:'أنماط الضرب',exact:true,level:1}).waitFor();
+ await p.locator('nav [data-page="home"]').click();await p.locator('nav [data-page="lessons"]').click();await p.getByRole('link',{name:'ابدئي الدرس ←',exact:true}).click();await p.getByRole('heading',{name:'أنماط الضرب',exact:true,level:1}).waitFor();
  const step=async n=>{await p.locator(`[data-lesson-step="${n}"]`).first().click();assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);};
  await p.locator('[data-warm="16"]').click();assert.match(await p.locator('[role="status"]').innerText(),/حاولي/);await p.locator('[data-warm="60"]').click();assert.match(await p.locator('[role="status"]').innerText(),/أحسنتِ/);
  await step(1);await p.locator('summary').click();assert.ok(await p.getByText('لا؛ في',{exact:false}).isVisible());await step(2);
