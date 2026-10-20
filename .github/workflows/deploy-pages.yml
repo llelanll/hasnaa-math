@@ -43,7 +43,7 @@ jobs:
             sleep 1
           done
           curl --fail --silent "$TEST_BASE_URL" > /dev/null
-          node --test tests/math-direction.test.js tests/visual-learning.test.js
+          node --test tests/math-direction.test.js tests/visual-learning.test.js tests/short-copy.test.js
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v3
         with:

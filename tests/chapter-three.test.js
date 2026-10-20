@@ -1,3 +1,4 @@
+import {copySteps} from '../src/short-copy.js';
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {chromium} from '@playwright/test';
@@ -27,7 +28,7 @@ for(const width of [1280,390,320])test(`chapter three at ${width}px: all lesson 
   assert.equal(await p.locator('[data-ch-step="5"]').isDisabled(),true);await noOverflow();
   await p.locator('[data-visual="page"][data-value="1"]').click();await p.locator(`[data-ch-warm="${(l.warm.answer+1)%3}"]`).click();assert.match(await p.locator('.live-feedback').innerText(),/حاولي/);await p.locator(`[data-ch-warm="${l.warm.answer}"]`).click();assert.match(await p.locator('.live-feedback').innerText(),/أحسنتِ/);
   await step(1);
-  for(let i=0;i<l.examples.length;i++){await p.locator(`[data-visual="example"][data-value="${i}"]`).first().click();for(let j=1;j<l.examples[i].steps.length;j++)await p.locator('[data-visual="next"]').click();assert.equal(await p.locator('.example-complete').count(),1);assert.equal(await p.locator('.solution-focus').innerText(),l.examples[i].steps.at(-1));}
+  for(let i=0;i<l.examples.length;i++){await p.locator(`[data-visual="example"][data-value="${i}"]`).first().click();for(let j=1;j<l.examples[i].steps.flatMap(copySteps).length;j++)await p.locator('[data-visual="next"]').click();assert.equal(await p.locator('.example-complete').count(),1);assert.equal(await p.locator('.solution-focus').innerText(),l.examples[i].steps.flatMap(copySteps).at(-1));}
   await noOverflow();
   await step(2);
   for(let i=0;i<4;i++){
