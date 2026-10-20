@@ -20,7 +20,7 @@ test('all 121 products, four question types, zero-safe missing factors, normaliz
 for(const width of [1280,390])test(`tables at ${width}px: every fact, modes, second chances, durable rewards, mastery and timer`,async()=>{
  const b=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
  try{const ctx=await b.newContext({viewport:{width,height:950},reducedMotion:'reduce'});const p=await ctx.newPage();const errors=[];p.on('pageerror',e=>errors.push(e.message));p.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
- await p.goto(base+'#home');await p.getByRole('link',{name:'تدرّبي على جدول الضرب'}).click();assert.equal(await p.locator('[data-table-select]').count(),12);
+ await p.goto(base+'#home');await p.getByRole('link',{name:'تدرّبي على جدول الضرب'}).click();await p.locator('[data-table-select="mixed"]').waitFor();assert.equal(await p.locator('[data-table-select]').count(),12);
  const noOverflow=async()=>assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
  for(let a=0;a<=10;a++){
   await p.locator(`[data-table-select="${a}"]`).click();assert.equal(await p.locator('[data-table-fact]').count(),11);await p.locator(`[data-table-fact="${a}:10"]`).click();assert.equal(await p.locator('.fact-array i').count(),a*10);await noOverflow();
