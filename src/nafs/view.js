@@ -6,7 +6,9 @@ import {mentor} from '../characters.js';
 
 const ar = n => Number(n).toLocaleString('ar-SA', {useGrouping: false, maximumFractionDigits: 2});
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const fmt = text => formatMathText(text);
+// A comparison sign on its own also needs isolation: RTL can mirror its glyph.
+const fmt = text => /^[<>≤≥=≠]$/.test(String(text).trim())
+  ? `<bdi class="math-content" dir="ltr">${esc(text)}</bdi>` : formatMathText(text);
 const visualText = text => String(text).replace(/[0-9]/g, c => '٠١٢٣٤٥٦٧٨٩'[c]);
 const domainById = new Map(domains.map(d => [d.id, d]));
 let store = loadStore(), storageWarning = false;

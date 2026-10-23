@@ -164,6 +164,7 @@ test('Nafis visuals at 320px and navigation at 1024px: Arabic digits, expression
       if (q) ids.add(q.id);
     }
     for (const q of questions.filter(item => item.visual?.type === 'bars')) ids.add(q.id);
+    for (const q of questions.filter(item => item.choices.includes('<') || item.choices.includes('>'))) ids.add(q.id);
     for (const q of questions.filter(item => /[×÷=<>]/u.test(item.question)).slice(0,5)) ids.add(q.id);
     for (const id of ids) {
       const q = bank.get(id);
@@ -176,6 +177,12 @@ test('Nafis visuals at 320px and navigation at 1024px: Arabic digits, expression
       await page.reload();
       const shown = await question(page);
       assert.equal(shown.id,id);
+      for (const [index,choice] of q.choices.entries()) if (/^[<>≤≥=≠]$/.test(choice)) {
+        const sign = page.locator(`[data-nafs-answer="${index}"] .math-content`);
+        assert.equal(await sign.innerText(),choice,'comparison sign source is preserved');
+        assert.equal(await sign.getAttribute('dir'),'ltr','standalone comparison glyph cannot mirror under RTL');
+        assert.equal(await sign.evaluate(el => getComputedStyle(el).direction),'ltr');
+      }
       if (q.visual) assert.equal(await page.locator('.nafs-visual').count(),1);
       if (q.visual?.type === 'bars') {
         const geometry = await page.locator('.nafs-bar-chart').evaluate(el => ({
