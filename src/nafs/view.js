@@ -3,13 +3,14 @@ import {skillById, createSession, currentQuestion, currentRecord,
   settled, respond, advance, analyse, loadStore, saveStore} from './model.js';
 import {formatMathText} from '../math-direction.js';
 import {mentor} from '../characters.js';
+import {additionalVisual} from './reviewed-visuals.js';
 
 const ar = n => Number(n).toLocaleString('ar-SA', {useGrouping: false, maximumFractionDigits: 2});
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 // A comparison sign on its own also needs isolation: RTL can mirror its glyph.
 const fmt = text => /^[<>≤≥=≠]$/.test(String(text).trim())
   ? `<bdi class="math-content" dir="ltr">${esc(text)}</bdi>` : formatMathText(text);
-const visualText = text => String(text).replace(/[0-9]/g, c => '٠١٢٣٤٥٦٧٨٩'[c]);
+const visualText = text => String(text).replace(/(?<=[0-9٠-٩])\.(?=[0-9٠-٩])/g, '٫').replace(/[0-9]/g, c => '٠١٢٣٤٥٦٧٨٩'[c]);
 const domainById = new Map(domains.map(d => [d.id, d]));
 let store = loadStore(), storageWarning = false;
 const routeFor = s => s.mode === 'skill' ? `nafs-skill-${s.skillId}` : `nafs-${s.mode}`;
@@ -41,6 +42,8 @@ function table(v) {
 }
 export function visual(v) {
   if (!v) return '';
+  const extra=additionalVisual(v,{ar,esc});
+  if(extra!==null)return `<div class="nafs-visual" data-visual-type="${esc(v.type)}">${extra}</div>`;
   let content = '';
   if (v.type === 'table') content = table(v);
   else if (v.type === 'sequence') content = `<div class="nafs-sequence math-content" dir="ltr">${v.values.map(x => `<span>${esc(visualText(x))}</span>`).join('<span aria-hidden="true">،</span>')}</div>`;
@@ -70,7 +73,7 @@ function training(session) {
     <progress class="nafs-progress" max="${session.questionIds.length}" value="${session.index}" aria-label="التقدم في الجولة"></progress>
     <dl class="nafs-classification"><div><dt>المجال:</dt><dd>${esc(d.title)}</dd></div><div><dt>المهارة:</dt><dd>${esc(s.title)}</dd></div></dl>
     <h1 class="nafs-prompt" tabindex="-1">${fmt(q.question)}</h1>${visual(q.visual)}
-    <div class="nafs-choices">${q.choices.map((choice,i) => `<button class="answer ${done && i === q.answer ? 'correct' : attempted.includes(i) ? 'wrong' : ''}" data-nafs-answer="${i}" ${done || attempted.includes(i) ? 'disabled' : ''}><span class="nafs-choice-letter">${['أ','ب','ج','د'][i]}</span><span>${fmt(choice)}</span></button>`).join('')}</div>
+    <div class="nafs-choices ${q.choices.some(c=>c.length>38)?'nafs-long-choices':''}">${q.choices.map((choice,i) => `<button class="answer ${done && i === q.answer ? 'correct' : attempted.includes(i) ? 'wrong' : ''}" data-nafs-answer="${i}" ${done || attempted.includes(i) ? 'disabled' : ''}><span class="nafs-choice-letter">${['أ','ب','ج','د'][i]}</span><span>${fmt(choice)}</span></button>`).join('')}</div>
     <div class="nafs-feedback" tabindex="-1" aria-live="polite">${feedback}</div>${done ? `<button class="primary" data-nafs-next>${session.index === session.questionIds.length - 1 ? 'شاهدي نتيجتكِ' : 'السؤال التالي'} ←</button>` : ''}
     <p class="local-note">النتيجة من المحاولة الأولى. المحاولة الثانية فرصة للتعلّم.</p></section>`;
 }

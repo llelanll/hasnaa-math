@@ -4,6 +4,7 @@ export const STORAGE_KEY = 'hasnaa-nafs-v1';
 export const questionById = new Map(questions.map(q => [q.id, q]));
 export const skillById = new Map(skills.map(s => [s.id, s]));
 const modes = new Set(['skill', 'mixed', 'simulation']);
+export const cognitiveLevels = ['direct', 'understanding', 'application', 'reasoning'];
 
 export function shuffled(items, random = Math.random) {
   const copy = [...items];
@@ -17,15 +18,28 @@ export function shuffled(items, random = Math.random) {
 export function createSession(mode, skillId = null, random = Math.random) {
   if (!modes.has(mode) || (mode === 'skill' && !skillById.has(skillId))) throw new Error('Unknown training');
   let pool;
-  if (mode === 'skill') pool = shuffled(questions.filter(q => q.skill === skillId), random);
+  if (mode === 'skill') {
+    // Scaffold a skill from its foundation to its reasoning task.
+    pool = cognitiveLevels.flatMap(level => shuffled(questions.filter(q => q.skill === skillId && q.cognitiveLevel === level), random));
+  }
   else {
-    // Every mixed session represents all four domains, without repeating an item.
-    pool = domains.flatMap(d => shuffled(questions.filter(q => q.domain === d.id), random).slice(0, 2));
+    // A small balanced assignment matrix, then random items within each cell.
+    // Each domain and level occurs twice in a mixed round. The simulation adds
+    // an application and a reasoning item in two different domains.
+    pool = [];
+    const orderedDomains=shuffled(domains,random),orderedLevels=shuffled(cognitiveLevels,random);
+    const pick=(domain,level)=>{
+      const used=new Set(pool.map(q=>q.skill));
+      const candidates=questions.filter(q=>q.domain===domain&&q.cognitiveLevel===level&&!used.has(q.skill));
+      const selected=shuffled(candidates,random)[0];
+      if(!selected)throw new Error('Missing classified training question');
+      pool.push(selected);
+    };
+    orderedDomains.forEach((d,i)=>{pick(d.id,orderedLevels[i]);pick(d.id,orderedLevels[(i+1)%4]);});
     if (mode === 'simulation') {
-      const represented = new Set(pool.map(q => q.id));
-      const extras = shuffled(domains, random).slice(0, 2).map(d =>
-        shuffled(questions.filter(q => q.domain === d.id && !represented.has(q.id)), random)[0]);
-      pool.push(...extras);
+      const extraDomains=shuffled(domains,random);
+      pick(extraDomains[0].id,'application');
+      pick(extraDomains[1].id,'reasoning');
     }
     pool = shuffled(pool, random);
   }

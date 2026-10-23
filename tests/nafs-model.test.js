@@ -10,6 +10,9 @@ test('all queue modes have exact lengths, unique questions and balanced coverage
     const s = createSession(mode);
     assert.equal(s.questionIds.length, mode === 'mixed' ? 8 : 10);
     assert.equal(new Set(s.questionIds).size, s.questionIds.length);
+    const selected=s.questionIds.map(id=>questionById.get(id));
+    assert.equal(new Set(selected.map(q=>q.skill)).size,selected.length,'a mixed round samples different skills');
+    if(mode==='mixed')for(const level of ['direct','understanding','application','reasoning'])assert.equal(selected.filter(q=>q.cognitiveLevel===level).length,2);
     for (const d of domains) {
       const count = s.questionIds.filter(id => questionById.get(id).domain === d.id).length;
       assert.ok(count >= 2 && count <= 3);
@@ -19,8 +22,22 @@ test('all queue modes have exact lengths, unique questions and balanced coverage
     const s = createSession('skill', skill.id);
     assert.equal(s.questionIds.length, 4);
     assert.ok(s.questionIds.every(id => questionById.get(id).skill === skill.id));
+    assert.deepEqual(s.questionIds.map(id=>questionById.get(id).cognitiveLevel),['direct','understanding','application','reasoning']);
   }
   assert.throws(() => createSession('skill', 'missing'));
+});
+
+test('completed diagnostic records from the prior bank retain their exact first-attempt results',()=>{
+  const prior=JSON.parse(readFileSync(new URL('../docs/nafs-review-before.json',import.meta.url),'utf8'));
+  const selected=prior.domains.flatMap((d,i)=>prior.questions.filter(q=>q.domain===d.id).slice(0,i<2?3:2));
+  const old={id:'prior-bank-session',mode:'simulation',skillId:null,questionIds:selected.map(q=>q.id),index:9,finished:true,started:1700000000000,
+    records:selected.map((q,i)=>({choices:i<6?[q.answer]:[(q.answer+1)%4,q.answer]}))};
+  const restored=restoreSession(old);
+  assert.ok(restored);
+  assert.deepEqual(restored,old);
+  const a=analyse(restored);
+  assert.equal(a.correct,6);assert.equal(a.assisted,4);
+  for(const d of a.domains){const indices=selected.map((q,i)=>q.domain===d.id?i:-1).filter(i=>i>=0);assert.equal(d.correct,indices.filter(i=>i<6).length);}
 });
 
 test('first-attempt diagnosis differs from assisted learning; no skipping or repeated answers', () => {
