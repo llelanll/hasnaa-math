@@ -10,7 +10,7 @@ permissions:
 
 concurrency:
   group: github-pages
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -30,8 +30,16 @@ jobs:
         run: npm ci --no-audit --no-fund
       - name: Build site
         run: npm run build
-      - name: Install Chromium for math direction regression tests
-        run: npx playwright install --with-deps chromium
+      - name: Prepare browser for regression tests
+        timeout-minutes: 5
+        run: |
+          if command -v google-chrome > /dev/null 2>&1; then
+            echo "CHROMIUM_PATH=$(command -v google-chrome)" >> "$GITHUB_ENV"
+          elif command -v chromium > /dev/null 2>&1; then
+            echo "CHROMIUM_PATH=$(command -v chromium)" >> "$GITHUB_ENV"
+          else
+            npx playwright install --with-deps chromium
+          fi
       - name: Verify full curriculum, legacy features and math direction
         env:
           TEST_BASE_URL: http://127.0.0.1:4173/hasnaa-math/
